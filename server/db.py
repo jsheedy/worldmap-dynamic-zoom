@@ -21,8 +21,9 @@ def get_cursor():
         for i in range(5): # try a few times
             try:
                 conn = connection_pool.getconn()
-                cursor = conn.cursor(cursor_factory=extras.DictCursor)
                 logging.debug('got connection.  rused: {}'.format(connection_pool._rused))
+                # cursor = conn.cursor(cursor_factory=extras.DictCursor)
+                cursor = conn.cursor()
                 yield cursor
                 break
             except pool.PoolError:
@@ -44,7 +45,7 @@ def get_cursor():
 
 def country_list(bbox=None):
     with get_cursor() as cursor:
-        query = """SELECT MAX(fips_cntry), MAX(cntry_name) from world_borders """
+        query = """SELECT MAX(fips_cntry) from world_borders """
         if bbox:
             envelope = ','.join(map(str, bbox))
             query += """ WHERE world_borders.geom && ST_MakeEnvelope(""" + envelope + ")"
@@ -56,9 +57,9 @@ def country_list(bbox=None):
 def country(id=None):
     with get_cursor() as cursor:
         query = """
-        SELECT ST_AsGeoJSON(ST_Simplify(ST_Union(geom),.05))
+        SELECT ST_AsGeoJSON(ST_Simplify(ST_Union(geom),.05)), MAX(cntry_name)
         FROM world_borders
         WHERE fips_cntry=%s
         GROUP BY fips_cntry"""
         cursor.execute(query, [id])
-        return cursor.fetchone()[0]
+        return cursor.fetchone()

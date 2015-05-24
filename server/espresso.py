@@ -22,8 +22,16 @@ def country_list():
 
 @app.route('/country/<id>')
 def country(id):
-    response = db.country(id)
-    return Response(response, mimetype='application/json')
+    geojson, name = db.country(id)
+
+    feature = {
+        "type": "Feature",
+        "properties": {
+            "name": name,
+        },
+        "geometry": json.loads(geojson)
+    };
+    return Response(json.dumps(feature), mimetype='application/json')
 
 
 if __name__ == '__main__':

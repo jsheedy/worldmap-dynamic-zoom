@@ -19,15 +19,43 @@ angular.module('worldmapApp')
       bounds : bounds
     });
 
+    function onEachFeature(feature, layer) {
+      leafletData.getMap('map').then(function(map) {
+
+        layer.on('mouseover mousemove', function(e){
+          var hover_bubble = new L.Rrose({ offset: new L.Point(0,-10), closeButton: false, autoPan: false })
+            .setContent(feature.properties.name)
+            .setLatLng(e.latlng)
+            .openOn(map);
+        });
+        layer.on('mouseout', function(e){ map.closePopup() });
+      });
+    }
+
+
     var addFeature = function(id) {
       if($scope.layers[id]) {
         // map.removeLayer($scope.layers[id]);
         // delete $scope.layers[id];
       } else {
-        var style = {color: '#000', fillColor: '#000', fillOpacity: 0.1, weight: 1.0 };
         var country = API.Country.get({id: id}, function() {
           leafletData.getMap('map').then(function(map) {
-            $scope.layers[id] = L.geoJson(country, {style: style}).addTo(map);
+            var layer = L.geoJson(country, {
+              onEachFeature: onEachFeature,
+              style: function(feature) {
+                return {
+                  fillColor: 'rgb('
+                    + parseInt(Math.random() * 255) + ','
+                    + parseInt(Math.random() * 255) + ','
+                    + parseInt(Math.random() * 255)
+                    + ')',
+                  color: '#000',
+                  fillOpacity: 0.5,
+                  weight: 1.0 };
+              }
+            })
+            $scope.layers[id] = layer;
+            layer.addTo(map);
           });
         });
       }

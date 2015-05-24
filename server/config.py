@@ -4,8 +4,8 @@ DB="world"
 USER="velotron"
 PASSWORD=""
 
-MINCONN = 8
-MAXCONN = 16
+MINCONN = 5
+MAXCONN = 20
 
 try:
 	from local_config import *

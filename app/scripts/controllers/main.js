@@ -7,6 +7,11 @@ angular.module('worldmapApp')
       lng: -60,
       zoom: 4
     };
+
+    $scope.defaults = {
+      maxZoom: 18
+    };
+
     $scope.layers = {};
     $scope.cache = {};
 
@@ -34,12 +39,12 @@ angular.module('worldmapApp')
 
 
     var addFeature = function(id) {
-      if($scope.layers[id]) {
-        // map.removeLayer($scope.layers[id]);
-        // delete $scope.layers[id];
+      var zoom = $scope.center.zoom;
+      if($scope.layers[id] && $scope.layers[id].zoom >= zoom) {
+        // do nothing, we have higher resolution data already
       } else {
-        var country = API.Country.get({id: id}, function() {
-          leafletData.getMap('map').then(function(map) {
+        leafletData.getMap('map').then(function(map) {
+          var country = API.Country.get({id: id, zoom: zoom}, function() {
             var layer = L.geoJson(country, {
               onEachFeature: onEachFeature,
               style: function(feature) {
@@ -54,8 +59,11 @@ angular.module('worldmapApp')
                   weight: 1.0 };
               }
             })
-            $scope.layers[id] = layer;
+            if($scope.layers[id]) {
+              map.removeLayer($scope.layers[id].layer);
+            }
             layer.addTo(map);
+            $scope.layers[id] = {layer: layer, zoom: zoom};
           });
         });
       }
@@ -79,5 +87,5 @@ angular.module('worldmapApp')
       });
 
     };
-    $scope.$watch('center', update, true);
+    $scope.$watch('bounds', update, true);
   });

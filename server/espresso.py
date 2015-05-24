@@ -22,7 +22,9 @@ def country_list():
 
 @app.route('/country/<id>')
 def country(id):
-    geojson, name = db.country(id)
+    zoom = int(request.values.get('zoom', 1))
+
+    geojson, name = db.country(id, zoom=zoom)
 
     feature = {
         "type": "Feature",

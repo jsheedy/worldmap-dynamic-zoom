@@ -49,12 +49,16 @@ def country_list(bbox=None):
         cursor.execute(query)
         yield from cursor
 
-def country(id=None):
+zoom_levels = [1/x**2 for x in range(1, 20)]
+def country(id=None, zoom=1):
+
+    tolerance = zoom_levels[zoom]
+
     with get_cursor() as cursor:
         query = """
-        SELECT ST_AsGeoJSON(ST_Simplify(ST_Union(geom),.05)), MAX(cntry_name)
+        SELECT ST_AsGeoJSON(ST_SimplifyPreserveTopology(ST_Union(geom),%s)), MAX(cntry_name)
         FROM world_borders
         WHERE fips_cntry=%s
         GROUP BY fips_cntry"""
-        cursor.execute(query, [id])
+        cursor.execute(query, [tolerance, id])
         return cursor.fetchone()

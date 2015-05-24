@@ -6,14 +6,9 @@ import psycopg2
 import psycopg2.extras as extras
 import psycopg2.pool as pool
 
-DB="world"
-USER="velotron"
-PASSWORD=""
+import config
 
-MINCONN = 8
-MAXCONN = 16
-
-connection_pool = pool.ThreadedConnectionPool(MINCONN, MAXCONN, database=DB, user=USER, password=PASSWORD)
+connection_pool = pool.ThreadedConnectionPool(config.MINCONN, config.MAXCONN, database=config.DB, user=config.USER, password=config.PASSWORD)
 
 @contextlib.contextmanager
 def get_cursor():

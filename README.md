@@ -1,9 +1,8 @@
-World map 
-=========
+# World map 
 
 This is an angular.js / leaflet / flask / postgis world map which serves GeoJSON features that are simplified on the server size based on map zoom level.
 
-To serve the angular app:
+## Serve the angular app:
 
 ```
 npm install
@@ -13,7 +12,27 @@ bower install
 grunt serve
 ```
 
-To serve the Flask app:
+## Set up the database:
+
+Download the [mappinghacks world_borders.zip](http://www.mappinghacks.com/data/).
+
+Convert to postgis:
+
+```
+shp2pgsql  world_borders  > world_borders.sql
+```
+
+## Import to postgis:
+
+```
+createdb world
+psql -c 'create extension postgis' world
+psql -f world_borders.sql world
+```
+
+TODO: move to higher resolution data, maybe [Natural Earth Data](http://www.naturalearthdata.com/downloads/10m-cultural-vectors/) or [GSHHG](http://www.soest.hawaii.edu/pwessel/gshhg/)
+
+## Serve the Flask app:
 
 ```
 cd server/

@@ -49,7 +49,7 @@ def country_list(bbox=None):
         cursor.execute(query)
         yield from cursor
 
-zoom_levels = [1/x**2 for x in range(1, 20)]
+zoom_levels = [(10.0/x**4) for x in range(1, 20)]
 def country(id=None, zoom=1):
 
     tolerance = zoom_levels[zoom]

@@ -7,6 +7,7 @@ import psycopg2.extras as extras
 import psycopg2.pool as pool
 
 import config
+import queries
 
 connection_pool = pool.ThreadedConnectionPool(config.MINCONN, config.MAXCONN, database=config.DB, user=config.USER, password=config.PASSWORD)
 

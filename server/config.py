@@ -1,6 +1,7 @@
 # defaults
 
 DB="world"
+# DB="gadm2"
 USER="velotron"
 PASSWORD=""
 

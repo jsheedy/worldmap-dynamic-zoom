@@ -9,7 +9,7 @@ angular.module('worldmapApp')
     };
 
     $scope.defaults = {
-      maxZoom: 18
+      maxZoom: 14
     };
 
     $scope.layers = {};
@@ -32,11 +32,23 @@ angular.module('worldmapApp')
             .setContent(feature.properties.name)
             .setLatLng(e.latlng)
             .openOn(map);
+          layer.setStyle({color: 'rgb(255,255,255)'});
         });
-        layer.on('mouseout', function(e){ map.closePopup() });
+        layer.on('mouseout', function(e){
+          map.closePopup()
+          layer.setStyle({color: 'rgb(0,0,0)'});
+        });
       });
     }
 
+    var isoToRGB = function(iso) {
+      // input: iso is a 3 character ISO string
+      // output: [r,g,b] integers
+      var r = (iso.charCodeAt(0)-65)*10;
+      var g = (iso.charCodeAt(1)-65)*10;
+      var b = (iso.charCodeAt(1)-65)*10;
+      return [r,g,b];
+    };
 
     var addFeature = function(id) {
       var zoom = $scope.center.zoom;
@@ -49,11 +61,7 @@ angular.module('worldmapApp')
               onEachFeature: onEachFeature,
               style: function(feature) {
                 return {
-                  fillColor: 'rgb('
-                    + parseInt(Math.random() * 255) + ','
-                    + parseInt(Math.random() * 255) + ','
-                    + parseInt(Math.random() * 255)
-                    + ')',
+                  fillColor: 'rgb(' + isoToRGB(id).join(',') + ')',
                   color: '#000',
                   fillOpacity: 0.5,
                   weight: 1.0 };

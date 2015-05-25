@@ -13,7 +13,11 @@ logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 cors = CORS(app)
-cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+cache = Cache(app, config={
+    'CACHE_TYPE': 'filesystem',
+    'CACHE_DIR': '/tmp/world',
+    'CACHE_THRESHOLD': 10**5
+    })
 
 @app.route('/country/')
 def country_list():

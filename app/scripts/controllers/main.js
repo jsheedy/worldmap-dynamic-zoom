@@ -1,3 +1,5 @@
+/* global L */
+
 'use strict';
 
 angular.module('worldmapApp')
@@ -9,7 +11,7 @@ angular.module('worldmapApp')
     };
 
     $scope.defaults = {
-      maxZoom: 14
+      maxZoom: 10
     };
 
     $scope.layers = {};
@@ -28,14 +30,14 @@ angular.module('worldmapApp')
       leafletData.getMap('map').then(function(map) {
 
         layer.on('mouseover mousemove', function(e){
-          var hover_bubble = new L.Rrose({ offset: new L.Point(0,-10), closeButton: false, autoPan: false })
+          new L.Rrose({ offset: new L.Point(0,-10), closeButton: false, autoPan: false })
             .setContent(feature.properties.name)
             .setLatLng(e.latlng)
             .openOn(map);
           layer.setStyle({color: 'rgb(255,255,255)'});
         });
-        layer.on('mouseout', function(e){
-          map.closePopup()
+        layer.on('mouseout', function(){
+          map.closePopup();
           layer.setStyle({color: 'rgb(0,0,0)'});
         });
       });
@@ -53,20 +55,20 @@ angular.module('worldmapApp')
     var addFeature = function(id) {
       var zoom = $scope.center.zoom;
       if($scope.layers[id] && $scope.layers[id].zoom >= zoom) {
-        // do nothing, we have higher resolution data already
+        // do nothing if we have higher resolution data already
       } else {
         leafletData.getMap('map').then(function(map) {
           var country = API.Country.get({id: id, zoom: zoom}, function() {
             var layer = L.geoJson(country, {
               onEachFeature: onEachFeature,
-              style: function(feature) {
+              style: function() {
                 return {
                   fillColor: 'rgb(' + isoToRGB(id).join(',') + ')',
                   color: '#000',
                   fillOpacity: 0.5,
                   weight: 1.0 };
               }
-            })
+            });
             if($scope.layers[id]) {
               map.removeLayer($scope.layers[id].layer);
             }
@@ -78,7 +80,7 @@ angular.module('worldmapApp')
     };
 
     var update = function() {
-      leafletData.getMap('map').then(function(map) {
+      leafletData.getMap('map').then(function() {
 
         var bbox = [
           $scope.bounds.southWest.lng,

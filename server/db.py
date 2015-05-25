@@ -32,21 +32,17 @@ def get_cursor():
         if conn:
             logging.exception("Closing with rollback")
             conn.rollback()
+            connection_pool.putconn(conn, close=True)
+
         raise
     else:
         conn.commit()
-    finally:
         if conn:
             connection_pool.putconn(conn)
 
 def country_list(bbox=None):
     with get_cursor() as cursor:
-        query = """SELECT MAX(fips_cntry) from world_borders """
-        if bbox:
-            envelope = ','.join(map(str, bbox))
-            query += """ WHERE world_borders.geom && ST_MakeEnvelope(""" + envelope + ")"
-
-        query += " GROUP BY fips_cntry"
+        query = queries.db.country_list(bbox)
         cursor.execute(query)
         yield from cursor
 
@@ -56,10 +52,6 @@ def country(id=None, zoom=1):
     tolerance = zoom_levels[zoom]
 
     with get_cursor() as cursor:
-        query = """
-        SELECT ST_AsGeoJSON(ST_SimplifyPreserveTopology(ST_Union(geom),%s)), MAX(cntry_name)
-        FROM world_borders
-        WHERE fips_cntry=%s
-        GROUP BY fips_cntry"""
+        query = queries.db.country()
         cursor.execute(query, [tolerance, id])
         return cursor.fetchone()

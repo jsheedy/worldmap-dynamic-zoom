@@ -49,11 +49,11 @@ angular
   .run(function($http, huCacheSerializableFactory) {
       var cache = huCacheSerializableFactory('myCache', {
         maxLength: 4.5 * 1024 * 1024, // 1MB of compressed chars
-        maxAge: 86400*7,
+        maxAge: 86400 * 1000 * 7,
         serializer: 'LZStringSerializer',
         storageMode: 'localStorage'
       });
       $http.defaults.cache = cache;
-    })
+    });
 
 

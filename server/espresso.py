@@ -21,7 +21,7 @@ cache = Cache(app, config={
 
 @app.route('/country/')
 def country_list():
-    bbox = map(float, request.values.getlist('bbox'))
+    bbox = list(map(float, request.values.getlist('bbox')))
     data = db.country_list(bbox=bbox)
     response = list(data)
     return Response(json.dumps(response), mimetype='application/json')

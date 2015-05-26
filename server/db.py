@@ -9,7 +9,7 @@ import psycopg2.pool as pool
 import config
 import queries
 
-connection_pool = pool.ThreadedConnectionPool(config.MINCONN, config.MAXCONN, database=config.DB, user=config.USER, password=config.PASSWORD)
+connection_pool = pool.ThreadedConnectionPool(config.MINCONN, config.MAXCONN, database=config.DB['DB'], user=config.DB['USER'], password=config.DB['PASSWORD'])
 
 @contextlib.contextmanager
 def get_cursor():

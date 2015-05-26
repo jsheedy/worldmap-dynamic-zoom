@@ -7,3 +7,4 @@ dist
 bower_components
 __pycache__
 *.pyc
+local_config.py

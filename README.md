@@ -19,7 +19,7 @@ Download the [mappinghacks world_borders.zip](http://www.mappinghacks.com/data/)
 Convert to postgis:
 
 ```
-shp2pgsql  world_borders  > world_borders.sql
+shp2pgsql -W LATIN1  world_borders  > world_borders.sql
 ```
 
 ## Import to postgis:

@@ -1,9 +1,11 @@
 # defaults
 
-DB="world"
-# DB="gadm2"
-USER="velotron"
-PASSWORD=""
+DB= {
+    'NAME': 'world_borders',
+    'DB': 'world',
+    'USER': 'velotron',
+    'PASSWORD': '',
+}
 
 MINCONN = 5
 MAXCONN = 20

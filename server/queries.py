@@ -11,20 +11,20 @@ class Query():
 class World(Query):
 
     def country_list(self, bbox=None):
-        query = """SELECT MAX(fips_cntry) from world_borders """
+        query = """SELECT MAX(fips) from world_borders """
         if bbox:
             envelope = ','.join(map(str, bbox))
-            query += """ WHERE world_borders.geom && ST_MakeEnvelope(""" + envelope + ")"
+            query += """ WHERE world_borders.geom && ST_MakeEnvelope(""" + envelope + ", 4326)"
 
-        query += " GROUP BY fips_cntry"
+        query += " GROUP BY fips"
         return query
 
     def country(self):
         query = """
-        SELECT ST_AsGeoJSON(ST_SimplifyPreserveTopology(ST_Union(geom),%s)), MAX(cntry_name)
+        SELECT ST_AsGeoJSON(ST_SimplifyPreserveTopology(ST_Union(geom),%s)), MAX(name)
         FROM world_borders
-        WHERE fips_cntry=%s
-        GROUP BY fips_cntry"""
+        WHERE fips=%s
+        GROUP BY fips"""
         return query
 
 
@@ -33,7 +33,12 @@ class GADM2(Query):
     def country_list(self, bbox):pass
     def country(self):pass
 
-if config.DB == 'world':
+
+class InvalidConfigurationError(Exception): pass
+
+if config.DB['NAME'] == 'world':
     db = World()
-elif config.DB == 'gadm2':
+elif config.DB['NAME'] == 'gadm2':
     db = GADM2()
+else:
+    raise InvalidConfigurationError("config.db must define a NAME key containing one of (world, gadm2) in order to define queries")

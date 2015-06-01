@@ -43,13 +43,20 @@ angular.module('worldmapApp')
       });
     }
 
+    var randomRGB = function(iso) {
+        var r = parseInt(Math.random() * 255); 
+        var g = parseInt(Math.random() * 255); 
+        var b = parseInt(Math.random() * 255); 
+        return 'rgb(' + [r,g,b].join(',') + ')';
+    };
+
     var isoToRGB = function(iso) {
       // input: iso is a 3 character ISO string
-      // output: [r,g,b] integers
+      // output: rgb(r,g,b) string
       var r = (iso.charCodeAt(0)-65)*10;
       var g = (iso.charCodeAt(1)-65)*10;
       var b = (iso.charCodeAt(1)-65)*10;
-      return [r,g,b];
+      return 'rgb(' + [r,g,b].join(',') + ')';
     };
 
     var addFeature = function(id) {
@@ -62,8 +69,9 @@ angular.module('worldmapApp')
             var layer = L.geoJson(country, {
               onEachFeature: onEachFeature,
               style: function() {
+                //fillColor: isoToRGB(id),
                 return {
-                  fillColor: 'rgb(' + isoToRGB(id).join(',') + ')',
+                  fillColor: randomRGB(),
                   color: '#000',
                   fillOpacity: 0.5,
                   weight: 1.0 };
